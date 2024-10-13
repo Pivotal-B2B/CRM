@@ -1,0 +1,257 @@
+import { useState, useEffect } from 'react'
+import { Bell, ChevronDown, Layout, List, Mail, Phone, Plus, Search, Upload, Users } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
+
+// Mock data
+const mockEmailStats = {
+  sent: 1234,
+  opened: 987,
+  clicked: 456
+}
+
+const mockCallStats = {
+  total: 567,
+  connected: 342,
+  voicemail: 198,
+  invalid: 27
+}
+
+const mockRecentActivity = [
+  { type: 'email', description: 'Email sent to John Smith' },
+  { type: 'phone', description: 'Call connected with Jane Doe' },
+  { type: 'users', description: 'New company added: Acme Inc.' },
+  { type: 'list', description: 'New list created: Q2 Prospects' },
+]
+
+export default function Dashboard() {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [emailStats, setEmailStats] = useState(null)
+  const [callStats, setCallStats] = useState(null)
+  const [recentActivity, setRecentActivity] = useState(null)
+
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setEmailStats(mockEmailStats)
+      setCallStats(mockCallStats)
+      setRecentActivity(mockRecentActivity)
+      setLoading(false)
+    }, 1500)
+  }, [])
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value)
+    // Implement actual search functionality here
+  }
+
+  const handleImport = () => {
+    // Implement import functionality
+    console.log('Import clicked')
+  }
+
+  const handleNewContact = () => {
+    // Implement new contact creation
+    console.log('New Contact clicked')
+  }
+
+  const handleNewCompany = () => {
+    // Implement new company creation
+    console.log('New Company clicked')
+  }
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white shadow-md">
+        <div className="p-4">
+          <h1 className="text-2xl font-bold text-gray-800">ABM CRM</h1>
+        </div>
+        <nav className="mt-4">
+          <a href="/dashboard" className="block py-2 px-4 text-gray-700 hover:bg-gray-200">Dashboard</a>
+          <a href="/contacts" className="block py-2 px-4 text-gray-700 hover:bg-gray-200">Contacts</a>
+          <a href="/companies" className="block py-2 px-4 text-gray-700 hover:bg-gray-200">Companies</a>
+          <a href="/lists" className="block py-2 px-4 text-gray-700 hover:bg-gray-200">Lists</a>
+          <a href="/campaigns" className="block py-2 px-4 text-gray-700 hover:bg-gray-200">Campaigns</a>
+          <a href="/reports" className="block py-2 px-4 text-gray-700 hover:bg-gray-200">Reports</a>
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        {/* Header */}
+        <header className="bg-white shadow-sm">
+          <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+              Dashboard
+            </h2>
+            <div className="flex items-center">
+              <Button variant="outline" size="icon" className="mr-2" aria-label="Notifications">
+                <Bell className="h-4 w-4" />
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="ml-2">
+                    <Avatar className="w-6 h-6 mr-2">
+                      <AvatarImage src="/avatar-placeholder.png" alt="John Doe" />
+                      <AvatarFallback>JD</AvatarFallback>
+                    </Avatar>
+                    John Doe
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>Logout</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </header>
+
+        {/* Dashboard Content */}
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          {/* Search and Quick Actions */}
+          <div className="flex justify-between items-center mb-6">
+            <div className="w-1/2">
+              <Input
+                type="text"
+                placeholder="Search contacts, companies, or lists..."
+                value={searchQuery}
+                onChange={handleSearch}
+                className="w-full"
+              />
+            </div>
+            <div className="space-x-2">
+              <Button onClick={handleImport}>
+                <Upload className="mr-2 h-4 w-4" /> Import
+              </Button>
+              <Button onClick={handleNewContact}>
+                <Plus className="mr-2 h-4 w-4" /> New Contact
+              </Button>
+              <Button onClick={handleNewCompany}>
+                <Plus className="mr-2 h-4 w-4" /> New Company
+              </Button>
+            </div>
+          </div>
+
+          {/* Dashboard Widgets */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Email Campaign Stats */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Email Campaigns</CardTitle>
+                <CardDescription>Last 30 days</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                    <Skeleton className="h-4 w-[150px]" />
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span>Sent</span>
+                      <span className="font-semibold">{emailStats.sent}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Opened</span>
+                      <span className="font-semibold">{emailStats.opened} ({Math.round(emailStats.opened / emailStats.sent * 100)}%)</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Clicked</span>
+                      <span className="font-semibold">{emailStats.clicked} ({Math.round(emailStats.clicked / emailStats.sent * 100)}%)</span>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Call Campaign Stats */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Call Campaigns</CardTitle>
+                <CardDescription>Last 30 days</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                    <Skeleton className="h-4 w-[150px]" />
+                    <Skeleton className="h-4 w-[100px]" />
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span>Total Calls</span>
+                      <span className="font-semibold">{callStats.total}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Connected</span>
+                      <span className="font-semibold">{callStats.connected} ({Math.round(callStats.connected / callStats.total * 100)}%)</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Voicemail</span>
+                      <span className="font-semibold">{callStats.voicemail} ({Math.round(callStats.voicemail / callStats.total * 100)}%)</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Invalid Number</span>
+                      <span className="font-semibold">{callStats.invalid} ({Math.round(callStats.invalid / callStats.total * 100)}%)</span>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Recent Activity */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Activity</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                    <Skeleton className="h-4 w-[150px]" />
+                    <Skeleton className="h-4 w-[100px]" />
+                  </div>
+                ) : (
+                  <ul className="space-y-2">
+                    {recentActivity.map((activity, index) => (
+                      <li key={index} className="flex items-center">
+                        {activity.type === 'email' && <Mail className="mr-2 h-4 w-4" />}
+                        {activity.type === 'phone' && <Phone className="mr-2 h-4 w-4" />}
+                        {activity.type === 'users' && <Users className="mr-2 h-4 w-4" />}
+                        {activity.type === 'list' && <List className="mr-2 h-4 w-4" />}
+                        <span>{activity.description}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
